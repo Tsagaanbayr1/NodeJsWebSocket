@@ -45,7 +45,7 @@ const server = express()
 
 const io = socketIO(server);
 
-var users = [];
+users = [];
 
 io.on("connection", (socket) => {
   console.log("Client connected");

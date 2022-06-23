@@ -45,33 +45,32 @@ const server = express()
 
 const io = socketIO(server);
 
-var users = [];
-
 io.on("connection", (socket) => {
   console.log("Client connected");
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
-io.on("connection", function (socket) {
-  console.log("A user connected");
-  socket.on("setUsername", function (data) {
-    console.log(data);
-    if (users.includes(data)) {
-      socket.emit(
-        "userExists",
-        data + " username is taken! Try some other username."
-      );
-    } else {
-      users.push(data);
-      socket.emit("userSet", { username: data });
-    }
-  });
-  socket.on("msg", function (data) {
-    //Send message to everyone
-    io.sockets.emit("newmsg", data);
-  });
-  socket.on("who", function (data) {
-    //Send message to everyone
-    io.sockets.emit("whoUsers", { users: users, user: data });
-  });
-});
+// users = [];
+// io.on("connection", function (socket) {
+//   console.log("A user connected");
+//   socket.on("setUsername", function (data) {
+//     console.log(data);
+//     if (users.includes(data)) {
+//       socket.emit(
+//         "userExists",
+//         data + " username is taken! Try some other username."
+//       );
+//     } else {
+//       users.push(data);
+//       socket.emit("userSet", { username: data });
+//     }
+//   });
+//   socket.on("msg", function (data) {
+//     //Send message to everyone
+//     io.sockets.emit("newmsg", data);
+//   });
+//   socket.on("who", function (data) {
+//     //Send message to everyone
+//     io.sockets.emit("whoUsers", { users: users, user: data });
+//   });
+// });
