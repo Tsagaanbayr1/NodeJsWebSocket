@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello world</title>
+  </head>
+  <script
+    src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+    integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    var socket = io();
+    function setUsername() {
+      socket.emit("setUsername", document.getElementById("name").value);
+    }
+    function getWho() {
+      socket.emit("who", user);
+    }
+    var user;
+    var to;
+    function setTo(toUser) {
+      to = toUser;
+    }
+    socket.on("userExists", function (data) {
+      document.getElementById("error-container").innerHTML = data;
+    });
+    socket.on("whoUsers", function (data) {
+      if (data.user != user) return;
+      // User alone here
+      if (data.users.length == 1) {
+        document.getElementById(
+          "message-container"
+        ).innerHTML += `<div>Sorry u r alone</div>`;
+        return;
+      }
+      for (var i = 0; i < data.users.length; i++) {
+        // Skip theirselves
+        if (data.users[i] == user) continue;
+        document.getElementById(
+          "message-container"
+        ).innerHTML += `<div><button type="button" name="button" onclick="setTo('${data.users[i]}')">${data.users[i]}</button></div>`;
+      }
+    });
+    socket.on("userSet", function (data) {
+      user = data.username;
+      document.body.innerHTML =
+        '<input type="text" id="message">\
+        <button type="button" name="button" onclick="sendMessage()">Send</button>\
+        <button type="button" name="button" onclick="getWho()">Who</button>\
+        <div id="message-container"></div>';
+    });
+    function sendMessage() {
+      var msg = document.getElementById("message").value;
+      if (msg) {
+        socket.emit("msg", { message: msg, user: user, to: to });
+      }
+    }
+    socket.on("newmsg", function (data) {
+      console.log(
+        `From: ${data.user}, To: ${data.to}, Received in ${user}, Display it: ${
+          (user && data.user == user) || data.to == user
+        }`
+      );
+      if ((user && data.user == user) || data.to == user) {
+        document.getElementById("message-container").innerHTML +=
+          "<div><b>" + data.user + "</b>: " + data.message + "</div>";
+      }
+    });
+  </script>
+  <body>
+    <div id="error-container"></div>
+    <input
+      id="name"
+      type="text"
+      name="name"
+      value=""
+      placeholder="Enter your name!"
+    />
+    <button type="button" name="button" onclick="setUsername()">
+      Let me chat!
+    </button>
+  </body>
+</html>
