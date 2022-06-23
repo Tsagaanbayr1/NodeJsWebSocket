@@ -4,7 +4,7 @@
   "description": "Some socket examples with Node.js and PubNub",
   "main": "client.js",
   "engines": {
-    "node": "16.15.1"
+    "node": "16.16.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
